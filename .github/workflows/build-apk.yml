@@ -31,12 +31,12 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org com.tyrstudio --project-name tyr_studio .
           fi
+          sed -i '/^\s*gal\s*:/d' pubspec.yaml
           if [ -f "android/app/build.gradle" ]; then
             sed -i 's/compileSdk[ =].*/compileSdk = 35/' android/app/build.gradle
             sed -i 's/targetSdk[ =].*/targetSdk = 35/' android/app/build.gradle
             sed -i 's/compileSdkVersion .*/compileSdkVersion 35/' android/app/build.gradle
             sed -i 's/targetSdkVersion .*/targetSdkVersion 35/' android/app/build.gradle
-            grep -q "compileSdkVersion" android/app/build.gradle || sed -i '/android {/a \    compileSdkVersion 35' android/app/build.gradle
           fi
           if [ -f "android/app/build.gradle.kts" ]; then
             sed -i 's/compileSdk = .*/compileSdk = 35/' android/app/build.gradle.kts
@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Install dependencies
-        run: flutter pub upgrade gal || flutter pub get
+        run: flutter pub get
 
       - name: Build release APK
         run: flutter build apk --release
