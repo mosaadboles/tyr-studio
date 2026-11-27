@@ -28,8 +28,6 @@ jobs:
 
       - name: Ensure Android project files exist
         run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org com.tyrstudio --project-name tyr_studio .
           fi
