@@ -36,6 +36,7 @@ jobs:
             sed -i 's/targetSdk[ =].*/targetSdk = 35/' android/app/build.gradle
             sed -i 's/compileSdkVersion .*/compileSdkVersion 35/' android/app/build.gradle
             sed -i 's/targetSdkVersion .*/targetSdkVersion 35/' android/app/build.gradle
+            grep -q "compileSdkVersion" android/app/build.gradle || sed -i '/android {/a \    compileSdkVersion 35' android/app/build.gradle
           fi
           if [ -f "android/app/build.gradle.kts" ]; then
             sed -i 's/compileSdk = .*/compileSdk = 35/' android/app/build.gradle.kts
