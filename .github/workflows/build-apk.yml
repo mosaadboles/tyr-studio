@@ -33,8 +33,21 @@ jobs:
           fi
           sed -i '/gal:/d' pubspec.yaml
           if [ -f "lib/main.dart" ]; then
-            sed -i "/package:gal\/gal.dart/d" lib/main.dart
-            sed -i "s/await Gal\.putImageBytes(/await Future.value(/g" lib/main.dart
+            python3 - << 'EOF'
+          import re
+          from pathlib import Path
+
+          p = Path("lib/main.dart")
+          text = p.read_text(encoding="utf-8")
+          text = "\n".join(line for line in text.splitlines() if "package:gal/gal.dart" not in line)
+          text = re.sub(
+              r"(?:await\s+)?(?:Future\.value|Gal\.putImageBytes)\s*\((?:[^()]*|\([^()]*\))*\)\s*;?",
+              "await Future.value();",
+              text,
+              flags=re.DOTALL,
+          )
+          p.write_text(text + "\n", encoding="utf-8")
+          EOF
           fi
           if [ -f "android/app/build.gradle" ]; then
             sed -i 's/compileSdk[ =].*/compileSdk = 35/' android/app/build.gradle
