@@ -40,13 +40,28 @@ jobs:
           p = Path("lib/main.dart")
           text = p.read_text(encoding="utf-8")
           text = "\n".join(line for line in text.splitlines() if "package:gal/gal.dart" not in line)
-          text = re.sub(
-              r"(?:await\s+)?(?:Future\.value|Gal\.putImageBytes)\s*\((?:[^()]*|\([^()]*\))*\)\s*;?",
-              "await Future.value();",
-              text,
-              flags=re.DOTALL,
-          )
-          p.write_text(text + "\n", encoding="utf-8")
+
+          pattern = re.compile(r"(?:await\s+)?Gal\.putImageBytes\s*\(")
+          out = []
+          i = 0
+          while i < len(text):
+              m = pattern.search(text, i)
+              if not m:
+                  out.append(text[i:])
+                  break
+              out.append(text[i:m.start()])
+              depth = 1
+              j = m.end()
+              while j < len(text) and depth > 0:
+                  if text[j] == "(":
+                      depth += 1
+                  elif text[j] == ")":
+                      depth -= 1
+                  j += 1
+              out.append("Future.value(null)")
+              i = j
+
+          p.write_text("".join(out) + "\n", encoding="utf-8")
           EOF
           fi
           if [ -f "android/app/build.gradle" ]; then
