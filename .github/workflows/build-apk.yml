@@ -24,7 +24,7 @@ jobs:
         with:
           flutter-version: '3.24.0'
           channel: 'stable'
-          cache: true
+          cache: false
 
       - name: Ensure Android project files exist
         run: |
@@ -75,11 +75,13 @@ jobs:
             sed -i 's/targetSdk = .*/targetSdk = 35/' android/app/build.gradle.kts
           fi
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Clean caches and install dependencies
+        run: |
+          rm -rf "$HOME/.gradle/caches" build android/.gradle android/app/build
+          flutter pub get
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-pub
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
