@@ -43,7 +43,7 @@ jobs:
           fi
 
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter pub upgrade gal || flutter pub get
 
       - name: Build release APK
         run: flutter build apk --release
